@@ -3,6 +3,8 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   package="mwe.surfaceviewwrongthread">
 
+  <uses-permission android:name="android.permission.INTERNET"/>
+
   <application
     android:icon="@null"
     android:label="SurfaceViewWrongThreadMWE">
