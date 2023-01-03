@@ -15,20 +15,21 @@ public class MainActivity extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    SurfaceView surfaceView = new SurfaceView(this);
-    setContentView(surfaceView);
     HandlerThread exoPlayerThread = new HandlerThread("ExoPlayerThread");
     exoPlayerThread.start();
     ExoPlayer exoPlayer = new SimpleExoPlayer.Builder(this)
             .setLooper(exoPlayerThread.getLooper())
             .build();
-    Handler commandHandler = new Handler(exoPlayerThread.getLooper());
-    commandHandler.post(() -> {
+    Handler handler = new Handler(exoPlayerThread.getLooper());
+    SurfaceView surfaceView = new HandlerDelegatingSurfaceHolderSurfaceView(this, handler);
+    setContentView(surfaceView);
+    handler.post(() -> {
       exoPlayer.setVideoSurfaceView(surfaceView);
       MediaItem mediaItem = MediaItem.fromUri("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
       exoPlayer.addMediaItem(mediaItem);
       exoPlayer.setPlayWhenReady(true);
       exoPlayer.prepare();
     });
+    handler.postDelayed(exoPlayer::release, 5_000);
   }
 }
